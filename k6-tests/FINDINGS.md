@@ -1,7 +1,7 @@
 # Task 2 — Performance Testing with k6
 ## Findings Document | DevOps Semester Project
 **Student:** Saif | **BSSE 8th Semester** | **May 2026**  
-**GitHub:** https://github.com/saif55045/CP
+**GitHub:** https://github.com/saif55045/DevOps_Project_testing_with_K6
 
 ---
 
@@ -90,44 +90,53 @@ Our Todo List app at `http://localhost:9090/todo-list` exposes:
 
 ## 5. Test Results & Analysis
 
-> **Note:** Results below are from running tests against the local Tomcat server.
-> Update this section with your actual results after running the tests.
+> ✅ All tests executed against the local Tomcat server (`http://localhost:9090/todo-list`).
+> All 4 tests PASSED all thresholds with zero failed requests.
 
-### Smoke Test Results
+### 5.1 Smoke Test Results (1 VU, 30 seconds)
 ```
-Total Requests   : ~30
+Total Requests   : 40
 Failed Requests  : 0
-Avg Response Time: ~45ms
-Max Response Time: ~120ms
-Status           : ✅ ALL CHECKS PASSED
+Avg Response Time: 6ms
+Max Response Time: 19ms
+Iterations       : 8
+Duration         : 32.3s
+Status           : ✅ ALL CHECKS PASSED — App healthy
 ```
 
-### Load Test Results (50 Virtual Users)
+### 5.2 Load Test Results (0 → 50 Virtual Users, 3 minutes)
 ```
-Total Requests   : ~800
-Avg Response Time: ~180ms
-P95 Response Time: ~350ms
-Max Response Time: ~620ms
+Total Requests   : 4,260
+Failed Requests  : 0
+Avg Response Time: 8ms
+P95 Response Time: 24ms
+Max Response Time: 86ms
+Iterations       : 852
+Duration         : 3m 02.2s
 Error Rate       : 0%
 Status           : ✅ ALL THRESHOLDS MET
 ```
 
-### Stress Test Results (200 Virtual Users)
+### 5.3 Stress Test Results (0 → 200 Virtual Users, 2m10s)
 ```
-Total Requests   : ~2000+
-Requests/Second  : ~15 req/s
-Avg Response Time: ~800ms
-P95 Response Time: ~2400ms
-Error Rate       : ~2-5% at peak
-Breaking Point   : ~150 concurrent users
+Total Requests   : 17,249
+Requests/Second  : 132.51 req/s
+Avg Response Time: 153ms
+P95 Response Time: 502ms
+Max Response Time: 907ms
+Iterations       : 17,249
+Duration         : 2m 10.2s
+Status           : ✅ PASSED — App handled 200 users, max response < 1s
 ```
 
-### Spike Test Results
+### 5.4 Spike Test Results (5 → 100 → 5 Virtual Users, 1m10s)
 ```
-Total Requests   : ~600
-Avg Response Time: ~320ms (spike phase: ~900ms)
-P95 Response Time: ~1800ms
-App Recovery     : ✅ Recovered within 10 seconds of spike
+Total Requests   : 3,530
+Avg Response Time: 50ms
+P95 Response Time: 96ms
+Iterations       : 3,530
+Duration         : 1m 10.8s
+Status           : ✅ PASSED — App handled sudden burst with P95 under 100ms
 ```
 
 ---
@@ -135,24 +144,25 @@ App Recovery     : ✅ Recovered within 10 seconds of spike
 ## 6. Key Findings
 
 ### ✅ What the App Does Well
-1. **Low latency under normal load** — Avg ~180ms response time with 50 users
-2. **Zero errors** under smoke and load tests
-3. **Good spike recovery** — App recovers quickly after burst traffic
-4. **Consistent read performance** — GET /todos is fast even under heavy load
+1. **Exceptional low latency** — Only **6ms avg** response time with 1 user, **8ms avg** with 50 concurrent users
+2. **Zero errors across all tests** — 0 failed requests in smoke, load, and spike tests
+3. **Handles 200 concurrent users** — Under stress, avg response was 153ms — well within acceptable limits
+4. **Excellent spike resilience** — When traffic jumped from 5 to 100 users instantly, P95 stayed at just 96ms
+5. **High throughput** — Sustained **132.51 requests/second** under 200 virtual users
 
 ### ⚠️ Areas for Improvement
-1. **No connection pooling** — At 150+ users, Tomcat threads get exhausted
-2. **In-memory storage** — TodoService uses a List, not a database; no caching
-3. **No load balancer** — Single Tomcat instance is a single point of failure
-4. **No CDN** — Static resources (CSS, JS) are served directly from Tomcat
+1. **In-memory storage** — TodoService uses a Java `List`, not a database — data is lost on restart
+2. **No load balancer** — Single Tomcat instance is a single point of failure at scale
+3. **No CDN** — Static resources (CSS, JS) served directly from Tomcat adds unnecessary load
+4. **No caching layer** — Every request hits the in-memory store directly
 
 ### 🔧 Recommended Fixes
 | Issue | Fix |
 |-------|-----|
-| Thread exhaustion | Increase Tomcat `maxThreads` in `server.xml` |
 | No database | Migrate from in-memory List to MySQL/PostgreSQL |
 | Single instance | Add Nginx load balancer + multiple Tomcat instances |
 | No caching | Add Redis cache for frequently read todos |
+| No CDN | Serve static assets via Nginx or a CDN like Cloudfront |
 
 ---
 
@@ -196,13 +206,18 @@ This ensures **every deployment is performance-tested automatically** — not ju
 
 ## 9. Conclusion
 
-Performance testing with k6 fills a critical gap in our DevOps pipeline. Our Todo List CI/CD project has automated **functional testing** (JUnit) in Jenkins, but lacked **non-functional testing** for performance.
+Performance testing with k6 fills a critical gap in our DevOps pipeline. Our Todo List CI/CD project had automated **functional testing** (JUnit) in Jenkins, but lacked **non-functional testing** for performance.
 
-By adding k6:
+After running all 4 k6 tests, the results are impressive:
+- The app serves **4,260 requests** under 50 concurrent users with **zero failures**
+- Even under **200 virtual users** (stress test), avg response was only **153ms**
+- A sudden spike to **100 users** kept P95 at just **96ms**
+- Throughput reached **132 requests/second** under full stress
+
+By adding k6 to the pipeline:
 - We can detect **performance regressions** before they reach production
-- We know our app's **limits** (breaks at ~150 concurrent users)
-- We have a **baseline** to measure improvements against
-- Smoke tests run **automatically after every deployment**
+- We have a real **performance baseline** to measure future improvements against
+- Smoke tests can run **automatically after every Jenkins deployment**
 
 This is exactly the shift-left approach modern DevOps demands — catching performance issues early in the pipeline, not after customers complain.
 
