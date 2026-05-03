@@ -1,0 +1,10 @@
+# k6 test results (JSON output files)
+k6-tests/k6-results/*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
