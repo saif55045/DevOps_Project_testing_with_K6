@@ -3,8 +3,14 @@
 
 **Course:** DevOps  
 **Program:** BSSE — 8th Semester  
-**Student:** Saif  
-**GitHub Repository:** https://github.com/saif55045/CP  
+**Students:**
+- Saif Ullah — Roll No. 22F-3644
+- Farhan Akhtar — Roll No. 22F-3682
+
+**GitHub Repositories:**
+- CI/CD Project: https://github.com/saif55045/CP
+- Performance Testing (Task 2): https://github.com/saif55045/DevOps_Project_testing_with_K6
+
 **Date:** May 2026
 
 ---
@@ -24,9 +30,10 @@
    - 3.8 Prometheus & Grafana (Monitoring)
    - 3.9 Apache Tomcat (Deployment)
 4. [Our Semester Project — Todo List CI/CD App](#4-our-semester-project)
-5. [What Is Missing — Gaps in Our DevOps Journey](#5-what-is-missing)
-6. [Alternative Tools and Frameworks](#6-alternative-tools-and-frameworks)
-7. [Conclusion](#7-conclusion)
+5. [Task 2: Topic Explored — Performance Testing with k6](#5-task-2-performance-testing-with-k6)
+6. [What Is Missing — Gaps in Our DevOps Journey](#6-what-is-missing)
+7. [Alternative Tools and Frameworks](#7-alternative-tools-and-frameworks)
+8. [Conclusion](#8-conclusion)
 
 ---
 
@@ -313,58 +320,183 @@ Developer pushes code
 
 ---
 
-## 5. What Is Missing — Gaps in Our DevOps Journey
+## 5. Task 2: Performance Testing with k6
 
-Despite covering a wide range of DevOps tools, several important areas were not fully explored:
+> **This is the topic we explored in depth for Task 2 of this project.**
+> **GitHub:** https://github.com/saif55045/DevOps_Project_testing_with_K6
 
-### 5.1 Security (DevSecOps)
-We briefly touched on SonarQube for code quality analysis, but **security scanning** is not deeply integrated into our pipeline. Missing elements include:
-- **Container image scanning** (e.g., Trivy, Snyk) — checking Docker images for known CVEs
-- **Dependency vulnerability scanning** (OWASP Dependency-Check)
-- **Secrets management** (HashiCorp Vault) — preventing hardcoded credentials
-- **SAST/DAST** (Static/Dynamic Application Security Testing)
+### 5.1 What is Performance Testing?
 
-### 5.2 GitOps & Advanced Deployment Strategies
-Our pipeline does a basic "push WAR to Tomcat" deployment. Missing:
-- **Blue-Green Deployments** — Running two identical environments, switching traffic instantly
-- **Canary Releases** — Gradually rolling out new versions to a subset of users
-- **Feature Flags** — Enabling/disabling features without redeployment
-- **GitOps** — Using Git as the single source of truth for deployment state (ArgoCD, Flux)
+Performance testing is a type of **non-functional testing** that evaluates how a system behaves under various load conditions. Unlike unit tests — which check if code is *functionally correct* — performance tests answer a completely different set of questions:
 
-### 5.3 Configuration Management
-We did not cover tools like **Ansible**, **Chef**, or **Puppet**, which automate server configuration, software installation, and system state management across fleets of machines.
+- How fast does the application respond to users?
+- How many users can it handle simultaneously before slowing down?
+- At what point does the system break or become unavailable?
+- Can it recover quickly after a sudden surge of traffic?
 
-### 5.4 Service Mesh & Microservices
-Our Todo app is a monolith. Modern enterprise applications are built as **microservices**. Missing areas:
-- **Istio / Linkerd** — Service mesh for traffic management, mTLS, observability
-- **API Gateway** — Managing external access to microservices
+Without performance testing, teams often discover issues **after** users are affected — when it is too late. A single slow deployment can cause user abandonment, lost revenue, and reputational damage. According to Google, **53% of mobile users abandon a page that takes more than 3 seconds to load**.
 
-### 5.5 Advanced Kubernetes
-We covered basic Kubernetes, but the following were not explored:
-- **Helm Charts** — Kubernetes package manager for templated deployments
-- **Horizontal Pod Autoscaler (HPA)** — Auto-scaling based on CPU/memory
-- **Persistent Volumes** — Stateful application storage in Kubernetes
-- **RBAC** — Role-Based Access Control for cluster security
-
-### 5.6 Artifact Management
-We did not use a dedicated artifact repository. Missing:
-- **Nexus Repository** or **JFrog Artifactory** — Storing and versioning build artifacts (JARs, WARs, Docker images)
-
-### 5.7 Logging
-We set up metrics monitoring (Prometheus + Grafana) but not **centralized log management**:
-- **ELK Stack** (Elasticsearch, Logstash, Kibana) — Aggregating and searching logs
-- **Loki + Grafana** — Lightweight log aggregation
-
-### 5.8 Incident Management & Runbooks
-No formal **incident response process** was established — a critical real-world DevOps practice.
+Performance testing is a critical gap in most CI/CD pipelines because it is easy to add unit tests but harder to test system-level behavior under realistic load.
 
 ---
 
-## 6. Alternative Tools and Frameworks
+### 5.2 Why k6 is a Current and Future Need
+
+**k6** is an open-source, developer-friendly load testing tool built by **Grafana Labs**. It was designed specifically for the modern DevOps workflow:
+
+| Feature | Details |
+|---------|---------|
+| **Language** | Test scripts are written in JavaScript — familiar to most developers |
+| **Performance** | Built in Go — extremely fast, handles thousands of VUs with low CPU/memory |
+| **CI/CD Native** | Runs in Jenkins, GitHub Actions, GitLab CI without any configuration overhead |
+| **Grafana Integration** | Results stream directly to Grafana dashboards in real-time |
+| **Open Source** | Free, with enterprise cloud options via Grafana Cloud |
+| **Adoption** | Used by Netflix, Google, Microsoft, and Grafana Labs themselves |
+
+**Why k6 is trending in 2024–2026:**
+- The shift to **cloud-native microservices** means every service boundary is a performance risk
+- **CI/CD pipelines** now need performance gates — not just unit test gates
+- k6 is the **#1 fastest-growing performance testing tool** in the DevOps community
+- k6 integrates natively with **Prometheus** and **Grafana** — tools already in our stack
+
+---
+
+### 5.3 Types of Performance Tests We Implemented
+
+We implemented 4 types of performance tests against the Todo List app (`http://localhost:9090/todo-list`):
+
+#### Smoke Test (`smoke-test.js`)
+- **Virtual Users:** 1 VU
+- **Duration:** 30 seconds
+- **Purpose:** Sanity check — verify the app responds correctly after every deployment
+- **When to run:** After every Jenkins deployment (automated gate)
+- **Thresholds:** Response < 2s, error rate < 1%
+
+#### Load Test (`load-test.js`)
+- **Virtual Users:** 0 → 10 → 25 → 50 VUs (ramp-up stages)
+- **Duration:** ~3 minutes
+- **Purpose:** Simulate realistic everyday user traffic
+- **Tests:** Browse todos (GET), filter by status, add new todos (POST)
+- **Thresholds:** P95 response < 3s, error rate < 5%
+
+#### Stress Test (`stress-test.js`)
+- **Virtual Users:** 0 → 20 → 50 → 100 → 150 → 200 VUs
+- **Duration:** ~2m10s
+- **Purpose:** Push beyond normal capacity to find the breaking point
+- **Goal:** Identify the maximum load the app can sustain
+- **Thresholds:** P95 response < 10s (stress tolerates higher latency)
+
+#### Spike Test (`spike-test.js`)
+- **Virtual Users:** 5 → 100 in 5 seconds, then back to 5
+- **Duration:** ~1m10s
+- **Purpose:** Simulate a sudden viral traffic burst — e.g., a news article links to the app
+- **Goal:** Check if the app crashes or recovers gracefully under sudden load
+
+---
+
+### 5.4 Real Test Results
+
+All tests were executed against the local Tomcat server. **Every test passed all thresholds with zero failed requests.**
+
+| Test | Total Requests | Avg Response | P95 Response | Max Response | Errors |
+|------|---------------|-------------|-------------|-------------|--------|
+| **Smoke** (1 VU, 30s) | 40 | 6ms | — | 19ms | 0% ✅ |
+| **Load** (0→50 VUs, 3min) | 4,260 | 8ms | 24ms | 86ms | 0% ✅ |
+| **Stress** (0→200 VUs, 2m10s) | 17,249 | 153ms | 502ms | 907ms | 0% ✅ |
+| **Spike** (5→100 VUs, 1m10s) | 3,530 | 50ms | 96ms | — | 0% ✅ |
+
+**Total requests across all tests: 25,039 — with ZERO failures.**  
+**Peak throughput under stress: 132.51 requests/second.**
+
+---
+
+### 5.5 Key Findings
+
+**What the app does well:**
+- Exceptional low latency under normal load — only **6ms avg** with 1 user, **8ms avg** with 50 concurrent users
+- Handles **200 concurrent users** with avg response of only 153ms
+- Survived a sudden spike to 100 users with P95 under **96ms**
+- Zero errors across all test runs
+
+**Areas for improvement:**
+- App uses **in-memory storage** (a Java List) — a real database (MySQL/PostgreSQL) would improve reliability
+- No **load balancer** — a single Tomcat instance is a single point of failure
+- No **caching layer** — Redis would reduce database pressure at scale
+
+### 5.6 Integration with CI/CD Pipeline
+
+One of k6's most powerful features is running **automatically inside Jenkins**. Adding a smoke test stage ensures every deployment is performance-tested, not just functionally tested:
+
+```groovy
+stage('Performance Test') {
+    steps {
+        echo '⚡ Running k6 smoke test...'
+        bat 'k6 run k6-tests/smoke-test.js'
+    }
+}
+```
+
+This implements the **shift-left** approach — catching performance regressions early in the pipeline before they reach production users.
+
+---
+
+## 6. What Is Missing — Gaps in Our DevOps Journey
+
+Despite covering a wide range of DevOps tools, several important areas were not fully explored. The table below lists all identified gaps, including those being explored by other course groups:
+
+| # | Gap Area | Missing Tools | Status |
+|---|----------|--------------|--------|
+| 1 | **Security (DevSecOps)** | Trivy, Snyk, HashiCorp Vault, OWASP ZAP | Being explored by a classmate group |
+| 2 | **GitOps (ArgoCD)** | ArgoCD — Git-driven K8s deployments | Being explored by a classmate group |
+| 3 | **GitOps (Flux CD)** | Flux CD — Kubernetes GitOps operator | Being explored by a classmate group |
+| 4 | **Service Mesh (Istio & Kiali)** | Istio, Kiali — traffic management, mTLS, observability | Being explored by a classmate group |
+| 5 | **Autonomous Ops / AIOps** | AI-driven operations, self-healing systems | Being explored by a classmate group |
+| 6 | **Performance Testing** | k6, JMeter, Gatling | ✅ **Explored in our Task 2 (see Section 5)** |
+| 7 | **Configuration Management** | Ansible, Chef, Puppet | Not yet covered |
+| 8 | **Centralized Logging** | ELK Stack, Loki + Grafana | Not yet covered |
+| 9 | **Artifact Management** | Nexus Repository, JFrog Artifactory | Not yet covered |
+| 10 | **Advanced Kubernetes** | Helm Charts, HPA, RBAC, Persistent Volumes | Not yet covered |
+
+### Brief Description of Each Gap
+
+**6.1 Security (DevSecOps)** — Security scanning is missing from our pipeline. In production, every Docker image should be scanned for vulnerabilities (Trivy), dependencies checked for CVEs (OWASP), and secrets managed securely (HashiCorp Vault). *(Topic being explored by a classmate group.)*
+
+**6.2 GitOps with ArgoCD** — ArgoCD enables Kubernetes deployments to be driven entirely by Git state. Any change to a Git repo is automatically synced to the cluster. *(Topic being explored by a classmate group.)*
+
+**6.3 GitOps with Flux CD** — Similar to ArgoCD, Flux CD is a lightweight GitOps operator for Kubernetes. *(Topic being explored by a classmate group.)*
+
+**6.4 Service Mesh with Istio & Kiali** — Istio manages traffic between microservices with features like mTLS, circuit breaking, and observability. Kiali provides a visual dashboard for the service mesh. *(Topic being explored by a classmate group.)*
+
+**6.5 Autonomous Ops / AIOps** — Using AI/ML to automate operational decisions — predicting failures, auto-scaling, and self-healing systems. *(Topic being explored by a classmate group.)*
+
+**6.6 Performance Testing with k6** — Covered in our Task 2. See Section 5 for the full exploration and real test results.
+
+**6.7 Configuration Management** — Tools like Ansible automate server setup, software installation, and configuration across fleets of machines using simple YAML playbooks.
+
+**6.8 Centralized Logging** — We monitor metrics (Prometheus + Grafana) but have no log aggregation. The ELK Stack (Elasticsearch, Logstash, Kibana) or Loki would fill this gap.
+
+**6.9 Artifact Management** — No versioned artifact store exists. Nexus Repository or JFrog Artifactory would store and version all build artifacts (JARs, WARs, Docker images).
+
+**6.10 Advanced Kubernetes** — Helm Charts, Horizontal Pod Autoscaling, Role-Based Access Control (RBAC), and Persistent Volumes were not explored.
+
+---
+
+## 7. Alternative Tools and Frameworks
 
 The following tools can complement or replace what we used, filling the identified gaps:
 
-### 6.1 CI/CD Alternatives to Jenkins
+### 7.1 Performance Testing Tools (Our Task 2 Topic)
+
+| Tool | Language | CI/CD Friendly | Best For |
+|------|----------|---------------|----------|
+| **k6** ✅ *(used)* | JavaScript | Native | Modern DevOps pipelines, Grafana integration |
+| **JMeter** | XML/GUI | Complex setup | Legacy enterprise, GUI-based testing |
+| **Gatling** | Scala | Good | High-performance, detailed HTML reports |
+| **Locust** | Python | Good | Python teams, simple scripting |
+
+> **k6 is the recommended tool** — it was built for CI/CD pipelines, integrates natively with Grafana, and is adopted by Netflix, Google, and Microsoft.
+
+### 7.2 CI/CD Alternatives to Jenkins
 
 | Tool | Type | Key Advantage |
 |------|------|--------------|
@@ -372,28 +504,15 @@ The following tools can complement or replace what we used, filling the identifi
 | **GitLab CI/CD** | Cloud-native | Built into GitLab, powerful pipeline syntax |
 | **CircleCI** | Cloud-native | Fast, parallelism built-in |
 | **Azure DevOps Pipelines** | Cloud-native | Deep Microsoft/Azure ecosystem integration |
-| **TeamCity** | Self-hosted | Strong JVM support, smart build caching |
 
-> **Recommendation:** GitHub Actions is an excellent complement to Jenkins, especially for open-source projects. Since our code is already on GitHub, adding a `.github/workflows/` directory enables CI without any additional infrastructure.
-
-### 6.2 GitOps Tools
+### 7.3 GitOps Tools
 
 | Tool | Purpose |
 |------|---------|
 | **ArgoCD** | Continuous delivery for Kubernetes using Git as source of truth |
-| **Flux** | Lightweight GitOps operator for Kubernetes |
+| **Flux CD** | Lightweight GitOps operator for Kubernetes |
 
-### 6.3 Configuration Management
-
-| Tool | Language | Use Case |
-|------|----------|---------|
-| **Ansible** | YAML Playbooks | Agentless, SSH-based server automation |
-| **Chef** | Ruby DSL | Policy-based configuration management |
-| **Puppet** | Puppet DSL | Declarative system configuration at scale |
-
-> **Recommendation:** **Ansible** is the most beginner-friendly and widely adopted in modern DevOps. It would pair well with our existing Terraform workflow.
-
-### 6.4 Security Tools (DevSecOps)
+### 7.4 Security Tools (DevSecOps)
 
 | Tool | Purpose |
 |------|---------|
@@ -401,52 +520,47 @@ The following tools can complement or replace what we used, filling the identifi
 | **Snyk** | Dependency and container security |
 | **OWASP ZAP** | Dynamic Application Security Testing (DAST) |
 | **HashiCorp Vault** | Secrets management — no more hardcoded passwords |
-| **Checkov** | Static analysis for Terraform IaC |
 
-### 6.5 Artifact & Package Management
+### 7.5 Configuration Management
+
+| Tool | Language | Use Case |
+|------|----------|---------|
+| **Ansible** | YAML Playbooks | Agentless, SSH-based server automation |
+| **Chef** | Ruby DSL | Policy-based configuration management |
+| **Puppet** | Puppet DSL | Declarative system configuration at scale |
+
+### 7.6 Service Mesh
 
 | Tool | Purpose |
 |------|---------|
-| **Nexus Repository** | Host Maven, npm, Docker artifacts privately |
-| **JFrog Artifactory** | Enterprise-grade artifact management |
-| **GitHub Packages** | Integrated with GitHub, supports Maven, Docker |
+| **Istio + Kiali** | Full-featured service mesh: traffic management, mTLS, observability |
+| **Linkerd** | Lightweight service mesh for Kubernetes |
 
-### 6.6 Centralized Logging
+### 7.7 Centralized Logging
 
 | Stack | Components | Use Case |
 |-------|-----------|---------|
 | **ELK Stack** | Elasticsearch + Logstash + Kibana | Full-featured log search and visualization |
 | **PLG Stack** | Promtail + Loki + Grafana | Lightweight, integrates with our existing Grafana |
 
-> **Recommendation:** Since we already use Grafana, adding **Loki** for log aggregation would be the most natural extension with minimal new tooling.
-
-### 6.7 Advanced Deployment & Testing
+### 7.8 Artifact Management
 
 | Tool | Purpose |
 |------|---------|
-| **Spinnaker** | Multi-cloud continuous delivery with canary/blue-green |
-| **Argo Rollouts** | Kubernetes-native progressive delivery |
-| **Selenium/Playwright** | End-to-end browser automation testing |
-| **k6 / JMeter** | Load and performance testing |
-| **Chaos Monkey** | Chaos engineering — testing system resilience |
-
-### 6.8 Service Mesh
-
-| Tool | Purpose |
-|------|---------|
-| **Istio** | Full-featured service mesh: traffic management, mTLS, observability |
-| **Linkerd** | Lightweight service mesh for Kubernetes |
-| **Consul** | Service discovery and configuration |
+| **Nexus Repository** | Host Maven, npm, Docker artifacts privately |
+| **JFrog Artifactory** | Enterprise-grade artifact management |
 
 ---
 
-## 7. Conclusion
+## 8. Conclusion
 
 This semester has provided a comprehensive foundation in DevOps practices and tooling. Starting from the basics of **Linux** and **Bash scripting**, we progressed through the full DevOps toolchain — versioning code with **GitHub**, containerizing applications with **Docker**, orchestrating at scale with **Kubernetes**, automating infrastructure with **Terraform** on **AWS**, building CI/CD pipelines in **Jenkins**, and monitoring systems with **Prometheus and Grafana**.
 
-Our **Todo List CI/CD project** is a practical demonstration of these principles working together: a developer commits code to GitHub, Jenkins automatically detects the change, runs tests, packages the application, and deploys it to Tomcat — all without manual intervention.
+Our **Todo List CI/CD project** demonstrates these principles working together: a developer commits code to GitHub, Jenkins automatically detects the change, runs tests, packages the application, and deploys it to Tomcat — all without manual intervention.
 
-However, the DevOps landscape is vast. Areas such as **DevSecOps** (security integration), **GitOps** (ArgoCD/Flux), **configuration management** (Ansible), **centralized logging** (ELK/Loki), and **advanced deployment strategies** (canary, blue-green) represent the next frontier. Modern organizations combining these with what we have learned would have a truly mature, production-grade DevOps practice.
+For **Task 2**, we explored **Performance Testing with k6** — a critical gap in our existing pipeline. Running 4 types of tests (Smoke, Load, Stress, Spike) against our live Todo List app, we processed **25,039 requests with zero failures**, sustained **132 requests/second** under 200 concurrent users, and established a performance baseline for the application.
+
+The DevOps landscape is vast. Other identified gaps — **DevSecOps** (Trivy, Vault), **GitOps** (ArgoCD, Flux CD), **Service Mesh** (Istio/Kiali), **Autonomous Ops**, **Configuration Management** (Ansible), and **Centralized Logging** (ELK) — are being explored by classmate groups, together forming a comprehensive view of the full DevOps ecosystem.
 
 DevOps is not a destination — it is a journey of **continuous improvement**, mirroring the very pipelines it creates.
 
@@ -456,13 +570,15 @@ DevOps is not a destination — it is a journey of **continuous improvement**, m
 
 1. Humble, J., & Farley, D. (2010). *Continuous Delivery*. Addison-Wesley.
 2. Kim, G., Humble, J., Debois, P., & Willis, J. (2016). *The DevOps Handbook*. IT Revolution Press.
-3. Jenkins Documentation — https://www.jenkins.io/doc/
-4. Kubernetes Documentation — https://kubernetes.io/docs/
-5. Terraform by HashiCorp — https://developer.hashicorp.com/terraform
-6. Prometheus Documentation — https://prometheus.io/docs/
-7. AWS Documentation — https://docs.aws.amazon.com/
-8. Docker Documentation — https://docs.docker.com/
+3. k6 Official Documentation — https://k6.io/docs/
+4. Jenkins Documentation — https://www.jenkins.io/doc/
+5. Kubernetes Documentation — https://kubernetes.io/docs/
+6. Terraform by HashiCorp — https://developer.hashicorp.com/terraform
+7. Prometheus Documentation — https://prometheus.io/docs/
+8. AWS Documentation — https://docs.aws.amazon.com/
+9. Docker Documentation — https://docs.docker.com/
 
 ---
 
-*Submitted for DevOps Course — BSSE 8th Semester | May 2026*
+*Submitted for DevOps Course — BSSE 8th Semester | May 2026*  
+*Saif Ullah (22F-3644) | Farhan Akhtar (22F-3682)*

@@ -14,22 +14,22 @@
 
 ## 🗂️ Slide Overview (15 min total)
 
-| Slide | Topic | Time | Presenter |
-|-------|-------|------|-----------|
-| 1 | Title Slide | 0:30 | All |
-| 2 | Agenda | 0:30 | Member 1 |
-| 3 | What is DevOps? | 1:00 | Member 1 |
-| 4 | DevOps Lifecycle Diagram | 1:00 | Member 1 |
-| 5 | Why Organizations Need DevOps | 1:00 | Member 1 |
-| 6 | Tools We Covered (Overview) | 1:30 | Member 2 |
-| 7 | Our CI/CD Project — Todo List App | 1:00 | Member 2 |
-| 8 | CI/CD Architecture Diagram | 1:00 | Member 2 |
-| 9 | Topic Explored: Performance Testing with k6 | 1:00 | Member 3 |
-| 10 | k6 Test Types & Architecture | 1:00 | Member 3 |
-| 11 | LIVE DEMO — k6 Running Tests | 3:00 | Member 3 |
-| 12 | What's Missing in DevOps | 1:00 | Member 3 |
-| 13 | Alternative Tools | 0:30 | Member 3 |
-| 14 | Conclusion + Q&A | 1:00 | All |
+| Slide | Topic | Time |
+|-------|-------|------|
+| 1 | Title Slide | 0:30 |
+| 2 | Agenda | 0:30 |
+| 3 | What is DevOps? | 1:00 |
+| 4 | DevOps Lifecycle Diagram | 1:00 |
+| 5 | Why Organizations Need DevOps | 1:00 |
+| 6 | Tools We Covered (Overview) | 1:30 |
+| 7 | Our CI/CD Project — Todo List App | 1:00 |
+| 8 | CI/CD Architecture Diagram | 1:00 |
+| 9 | Topic Explored: Performance Testing with k6 | 1:00 |
+| 10 | k6 Test Types & Real Results | 1:00 |
+| 11 | LIVE DEMO — k6 Running Tests | 3:00 |
+| 12 | What's Missing in DevOps | 1:00 |
+| 13 | Alternative Tools | 0:30 |
+| 14 | Conclusion + Q&A | 1:00 |
 
 ---
 
@@ -40,10 +40,14 @@
 DevOps: Knowledge, Current Needs & Demonstration
 
 BSSE — 8th Semester | DevOps Course
-Group Members: [Name 1] | [Name 2] | [Name 3]
-Repo 1 (CI/CD App): github.com/saif55045/CP
-Repo 2 (k6 Testing): github.com/saif55045/DevOps_Project_testing_with_K6
-Date: May 2026
+
+Group Members:
+  • Saif Ullah — 22F-3644
+  • Farhan Akhtar — 22F-3682
+
+CI/CD Repo  : github.com/saif55045/CP
+k6 Repo     : github.com/saif55045/DevOps_Project_testing_with_K6
+Date        : May 2026
 ```
 
 ### Design Tips:
@@ -447,14 +451,7 @@ Before your presentation:
 - [ ] Have FINDINGS.md open to show results
 - [ ] Start screen recording (OBS / Windows Game Bar: `Win + G`)
 - [ ] Print Task 1 report (black & white, double-sided) → submit BEFORE starting
-- [ ] All group members know which slides they're presenting
-
-### Time check:
-- Slides 1–5: **~4:00 min** → Member 1 (DevOps overview)
-- Slides 6–8: **~3:30 min** → Member 2 (CI/CD project)
-- Slides 9–11: **~5:00 min** → Member 3 (k6 topic + live demo)
-- Slides 12–14: **~2:30 min** → Member 3 / All (gaps + conclusion)
-- **Total: ~15 minutes ✅**
+- [ ] All group members know their part of the slides
 
 ---
 
