@@ -30,7 +30,7 @@
    - 3.8 Prometheus & Grafana (Monitoring)
    - 3.9 Apache Tomcat (Deployment)
 4. [Our Semester Project — Todo List CI/CD App](#4-our-semester-project)
-5. [Task 2: Topic Explored — Performance Testing with k6](#5-task-2-performance-testing-with-k6)
+5. [Performance Testing with k6 — Filling the Gap](#5-performance-testing-with-k6)
 6. [What Is Missing — Gaps in Our DevOps Journey](#6-what-is-missing)
 7. [Alternative Tools and Frameworks](#7-alternative-tools-and-frameworks)
 8. [Conclusion](#8-conclusion)
@@ -320,9 +320,9 @@ Developer pushes code
 
 ---
 
-## 5. Task 2: Performance Testing with k6
+## 5. Performance Testing with k6 — Filling the Gap
 
-> **This is the topic we explored in depth for Task 2 of this project.**
+> **This is the trending topic we explored in depth to address a key missing area in our DevOps pipeline.**
 > **GitHub:** https://github.com/saif55045/DevOps_Project_testing_with_K6
 
 ### 5.1 What is Performance Testing?
@@ -451,7 +451,7 @@ Despite covering a wide range of DevOps tools, several important areas were not 
 | 3 | **GitOps (Flux CD)** | Flux CD — Kubernetes GitOps operator | Being explored by a classmate group |
 | 4 | **Service Mesh (Istio & Kiali)** | Istio, Kiali — traffic management, mTLS, observability | Being explored by a classmate group |
 | 5 | **Autonomous Ops / AIOps** | AI-driven operations, self-healing systems | Being explored by a classmate group |
-| 6 | **Performance Testing** | k6, JMeter, Gatling | ✅ **Explored in our Task 2 (see Section 5)** |
+| 6 | **Performance Testing** | k6, JMeter, Gatling | ✅ **Explored by us (see Section 5)** |
 | 7 | **Configuration Management** | Ansible, Chef, Puppet | Not yet covered |
 | 8 | **Centralized Logging** | ELK Stack, Loki + Grafana | Not yet covered |
 | 9 | **Artifact Management** | Nexus Repository, JFrog Artifactory | Not yet covered |
@@ -469,7 +469,7 @@ Despite covering a wide range of DevOps tools, several important areas were not 
 
 **6.5 Autonomous Ops / AIOps** — Using AI/ML to automate operational decisions — predicting failures, auto-scaling, and self-healing systems. *(Topic being explored by a classmate group.)*
 
-**6.6 Performance Testing with k6** — Covered in our Task 2. See Section 5 for the full exploration and real test results.
+**6.6 Performance Testing with k6** — Explored by us. See Section 5 for the full implementation and real test results.
 
 **6.7 Configuration Management** — Tools like Ansible automate server setup, software installation, and configuration across fleets of machines using simple YAML playbooks.
 
@@ -485,7 +485,7 @@ Despite covering a wide range of DevOps tools, several important areas were not 
 
 The following tools can complement or replace what we used, filling the identified gaps:
 
-### 7.1 Performance Testing Tools (Our Task 2 Topic)
+### 7.1 Performance Testing Tools (Our Explored Topic)
 
 | Tool | Language | CI/CD Friendly | Best For |
 |------|----------|---------------|----------|
@@ -558,7 +558,7 @@ This semester has provided a comprehensive foundation in DevOps practices and to
 
 Our **Todo List CI/CD project** demonstrates these principles working together: a developer commits code to GitHub, Jenkins automatically detects the change, runs tests, packages the application, and deploys it to Tomcat — all without manual intervention.
 
-For **Task 2**, we explored **Performance Testing with k6** — a critical gap in our existing pipeline. Running 4 types of tests (Smoke, Load, Stress, Spike) against our live Todo List app, we processed **25,039 requests with zero failures**, sustained **132 requests/second** under 200 concurrent users, and established a performance baseline for the application.
+To address a key missing area, we explored **Performance Testing with k6** — running 4 types of tests (Smoke, Load, Stress, Spike) against our live Todo List app. We processed **25,039 requests with zero failures**, sustained **132 requests/second** under 200 concurrent users, and established a performance baseline for the application.
 
 The DevOps landscape is vast. Other identified gaps — **DevSecOps** (Trivy, Vault), **GitOps** (ArgoCD, Flux CD), **Service Mesh** (Istio/Kiali), **Autonomous Ops**, **Configuration Management** (Ansible), and **Centralized Logging** (ELK) — are being explored by classmate groups, together forming a comprehensive view of the full DevOps ecosystem.
 
