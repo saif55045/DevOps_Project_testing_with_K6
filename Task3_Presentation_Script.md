@@ -22,12 +22,14 @@
 | 4 | DevOps Lifecycle Diagram | 1:00 | Member 1 |
 | 5 | Why Organizations Need DevOps | 1:00 | Member 1 |
 | 6 | Tools We Covered (Overview) | 1:30 | Member 2 |
-| 7 | Our Project — Todo List App | 1:00 | Member 2 |
-| 8 | Architecture & Pipeline Diagram | 1:30 | Member 2 |
-| 9 | LIVE DEMO | 3:30 | Member 3 |
-| 10 | What's Missing in DevOps | 1:00 | Member 3 |
-| 11 | Alternative Tools | 1:00 | Member 3 |
-| 12 | Conclusion + Q&A | 1:00 | All |
+| 7 | Our CI/CD Project — Todo List App | 1:00 | Member 2 |
+| 8 | CI/CD Architecture Diagram | 1:00 | Member 2 |
+| 9 | Topic Explored: Performance Testing with k6 | 1:00 | Member 3 |
+| 10 | k6 Test Types & Architecture | 1:00 | Member 3 |
+| 11 | LIVE DEMO — k6 Running Tests | 3:00 | Member 3 |
+| 12 | What's Missing in DevOps | 1:00 | Member 3 |
+| 13 | Alternative Tools | 0:30 | Member 3 |
+| 14 | Conclusion + Q&A | 1:00 | All |
 
 ---
 
@@ -39,7 +41,8 @@ DevOps: Knowledge, Current Needs & Demonstration
 
 BSSE — 8th Semester | DevOps Course
 Group Members: [Name 1] | [Name 2] | [Name 3]
-GitHub: github.com/saif55045/CP
+Repo 1 (CI/CD App): github.com/saif55045/CP
+Repo 2 (k6 Testing): github.com/saif55045/DevOps_Project_testing_with_K6
 Date: May 2026
 ```
 
@@ -58,9 +61,10 @@ What We'll Cover Today
 
 01  What is DevOps & Why It Matters
 02  Tools We Studied This Semester
-03  Our Project: Todo List CI/CD App
-04  Live Demo
-05  What's Missing & Future Tools
+03  Our CI/CD Project: Todo List App
+04  Topic Explored: Performance Testing with k6
+05  LIVE DEMO — k6 in Action
+06  What's Missing & Future Tools
 ```
 
 ### Speaker Notes:
@@ -238,55 +242,114 @@ Monitoring: Prometheus scrapes Jenkins → Grafana Dashboard
 
 ---
 
-## 📊 SLIDE 9 — LIVE DEMO (3.5 minutes)
+## 📊 SLIDE 9 — Topic Explored: Performance Testing with k6
 
-### This is not a slide — this is a screen recording/live demo
+### Slide Content:
+```
+Task 2: Performance Testing with k6
 
-### Demo Script (exactly what to show):
+What is Performance Testing?
+→ Tests how the system behaves under load — not just "is it correct?" but
+  "is it fast enough? Can it handle real users?"
 
-**Step 1 — Show the Running App (45 sec)**
-```
-1. Open browser → http://localhost:9090/todo-list/
-2. Show the Todo List interface
-3. Add a task: "DevOps Presentation Demo Task" with HIGH priority
-4. Mark it complete
-5. Show filters working (All / Pending / Completed)
-```
+Why k6?
+⚡ Written in Go — extremely fast, low memory usage
+📝 Test scripts in JavaScript — developer friendly
+🔄 CI/CD native — runs in Jenkins, GitHub Actions out of the box
+🌍 Used by Netflix, Google, Microsoft, Grafana Labs
+📊 Integrates with Grafana for real-time dashboards
 
-**Step 2 — Show the Code on GitHub (30 sec)**
-```
-1. Open browser → github.com/saif55045/CP
-2. Show the Jenkinsfile
-3. Say: "Every push to this repo triggers our pipeline"
-```
-
-**Step 3 — Trigger the Jenkins Pipeline (1:30)**
-```
-1. Open Jenkins → http://localhost:8080
-2. Click on the pipeline job
-3. Click "Build Now" (or push a small commit)
-4. Show the stages running: Checkout → Build → Test → Package → Deploy
-5. Click on a stage to show the console output
-6. Show the JUnit test report (all tests passing)
-```
-
-**Step 4 — Show Grafana Dashboard (45 sec)**
-```
-1. Open Grafana → http://localhost:3000
-2. Show the Jenkins monitoring dashboard
-3. Point to: Build count panel, Build duration panel, Success rate
+Why this topic is trending:
+→ 53% of users abandon pages that take more than 3 seconds to load
+→ Modern CI/CD pipelines must catch performance regressions BEFORE production
+→ k6 is the #1 fastest-growing performance testing tool (2024–2026)
 ```
 
 ### Speaker Notes:
-> "Now let me show you the project in action. [Start screen share/recording]"
-> "This is our Todo List application running live on Tomcat..."
-> "Here's our GitHub repository with the Jenkinsfile that defines our pipeline..."
-> "I'll now trigger a Jenkins build so you can see the full pipeline execute..."
-> "And here's our Grafana dashboard showing real-time build metrics from Prometheus..."
+> "Now we move to Task 2 — the topic we explored. We chose Performance Testing with k6, which is one of the most trending testing tools in the DevOps world right now. Unlike unit tests which check if code is correct, performance testing checks if the system is FAST ENOUGH for real users. k6 was built from the ground up for DevOps — it runs in pipelines, integrates with Grafana, and is trusted by Netflix and Google."
 
 ---
 
-## 📊 SLIDE 10 — What's Missing in DevOps
+## 📊 SLIDE 10 — k6 Test Types & Real Results
+
+### Slide Content:
+```
+We Implemented 4 Types of Performance Tests
+Target: Todo List App at localhost:9090
+
+┌─────────────┬──────────────────┬──────────┬───────────┬──────────┐
+│ Test Type   │ Virtual Users    │ Requests │ Avg Resp  │ Errors   │
+├─────────────┼──────────────────┼──────────┼───────────┼──────────┤
+│ Smoke       │ 1 VU, 30s        │ 40       │ 6ms       │ 0% ✅    │
+│ Load        │ 0→50 VUs, 3min   │ 4,260    │ 8ms       │ 0% ✅    │
+│ Stress      │ 0→200 VUs, 2m10s │ 17,249   │ 153ms     │ 0% ✅    │
+│ Spike       │ 5→100 VUs, 1m10s │ 3,530    │ 50ms      │ 0% ✅    │
+└─────────────┴──────────────────┴──────────┴───────────┴──────────┘
+
+Total: 25,039 requests — ZERO failures
+Peak throughput: 132.51 requests/second
+```
+
+### Design Tips:
+- Show this as a table in PowerPoint with green checkmarks
+- Add a bar chart showing avg response time across tests
+
+### Speaker Notes:
+> "We ran 4 types of tests against our live Todo List app. The smoke test confirms the app is healthy. The load test simulates 50 real users — all passing with just 8ms average response. The stress test pushed to 200 users — still only 153ms average. And the spike test simulated a sudden viral traffic burst — the app handled it with P95 under 100ms. Total: 25,039 requests with zero failures."
+
+---
+
+## 📊 SLIDE 11 — LIVE DEMO — k6 in Action (3 minutes)
+
+### This is a live terminal demo — NOT a slide
+
+### Demo Script (exactly what to run):
+
+**Step 1 — Show the GitHub repo (20 sec)**
+```
+1. Open browser → github.com/saif55045/DevOps_Project_testing_with_K6
+2. Show the k6-tests/ folder structure
+3. Open smoke-test.js briefly — show it's JavaScript
+```
+
+**Step 2 — Run the Smoke Test live (45 sec)**
+```
+1. Open terminal → navigate to project/k6-tests/
+2. Type and run: k6 run smoke-test.js
+3. Point out as it runs:
+   - The VU count
+   - The ✓ checkmarks showing all checks passing
+   - The response time metrics at the end
+```
+
+**Step 3 — Run the Load Test (1:30)**
+```
+1. Type and run: k6 run load-test.js
+2. Watch the stages ramp up in real-time (0→10→25→50 users)
+3. Point to the progress bar showing virtual users increasing
+4. At the end, highlight:
+   - Total Requests: 4,260
+   - Avg Response: 8ms
+   - Failed Requests: 0
+```
+
+**Step 4 — Show findings document (30 sec)**
+```
+1. Open FINDINGS.md in the repo
+2. Show the results table
+3. Point to key finding: "132 requests/second under 200 users"
+```
+
+### Speaker Notes:
+> "Let me show you k6 in action against our live Todo List app."
+> "Here is our GitHub repository for this task — you can see the 4 test files."
+> "I'll run the smoke test first — watch the checkmarks appear..."
+> "Now the load test — notice the VU count ramping up from 0 to 50 users..."
+> "Look at the results — 4,260 requests, zero failures, 8ms average response time. This app is fast."
+
+---
+
+## 📊 SLIDE 12 — What's Missing in DevOps
 
 ### Slide Content:
 ```
@@ -308,43 +371,45 @@ Gaps in Our DevOps Journey
 
 ❌ Artifact Management
    → No Nexus/Artifactory for versioned artifacts
+
+✅ Performance Testing → COVERED with k6 (Task 2!)
 ```
 
 ### Speaker Notes:
-> "Despite covering a wide range of tools, there are still important areas of DevOps that we didn't explore. The most critical gap is security — we have no container scanning or secrets management. In a real production environment, every Docker image should be scanned for vulnerabilities before deployment."
+> "Despite covering a wide range of tools, several important areas remain unexplored. The most critical gap is security — no container scanning or secrets management. In a real production environment, every Docker image should be scanned before deployment. However — one gap we DID fill through this project is performance testing. We explored k6, which was previously missing from our pipeline."
 
 ---
 
-## 📊 SLIDE 11 — Alternative & Missing Tools
+## 📊 SLIDE 13 — Alternative & Missing Tools
 
 ### Slide Content:
 ```
 Tools to Fill the Gaps
 
-Category            | What We Used  | What We're Missing
-────────────────────────────────────────────────────────
-CI/CD               | Jenkins       | GitHub Actions, GitLab CI
-Security (DevSecOps)| SonarQube     | Trivy, Vault, Snyk
-Config Management   | —             | Ansible, Puppet
-GitOps              | —             | ArgoCD, Flux
-Logging             | —             | ELK Stack, Loki
-Artifact Mgmt       | —             | Nexus, JFrog Artifactory
-Deployment Strategy | Basic deploy  | Blue-Green, Canary
-Load Testing        | —             | k6, JMeter
+Category            | What We Used      | What We're Missing
+────────────────────────────────────────────────────────────
+CI/CD               | Jenkins           | GitHub Actions, GitLab CI
+Security (DevSecOps)| SonarQube         | Trivy, Vault, Snyk
+Config Management   | —                 | Ansible, Puppet
+GitOps              | —                 | ArgoCD, Flux
+Logging             | —                 | ELK Stack, Loki
+Artifact Mgmt       | —                 | Nexus, JFrog Artifactory
+Deployment Strategy | Basic deploy      | Blue-Green, Canary
+Perf. Testing       | ✅ k6 (Task 2)   | JMeter, Gatling
 ```
 
 ### Speaker Notes:
-> "These are the tools we recommend to make our pipeline truly production-ready. The most important additions would be: GitHub Actions for cloud-native CI without managing a Jenkins server, Ansible for configuration management, Trivy for Docker security scanning, and the ELK stack or Loki for log aggregation — since we can already visualize logs in Grafana."
+> "Here's the full gap analysis. Notice that Performance Testing, which was previously missing, is now covered — we implemented it in Task 2 with k6. The remaining critical gaps for a production-ready pipeline are: security scanning with Trivy, secrets management with HashiCorp Vault, and configuration management with Ansible."
 
 ---
 
-## 📊 SLIDE 12 — Conclusion
+## 📊 SLIDE 14 — Conclusion
 
 ### Slide Content:
 ```
 Conclusion
 
-What We Achieved:
+What We Achieved This Semester:
 ✅ Full CI/CD pipeline: Code → Build → Test → Deploy
 ✅ Automated testing with JUnit in Jenkins
 ✅ Infrastructure as Code with Terraform on AWS
@@ -352,37 +417,43 @@ What We Achieved:
 ✅ Real-time monitoring with Prometheus + Grafana
 ✅ Live Todo List app deployed on Tomcat
 
-Key Takeaway:
-"DevOps is not a tool — it is a culture of
- continuous improvement and automation."
+Task 2 — Topic Explored:
+✅ Performance Testing with k6
+   → 25,039 requests | 0 errors | 132 req/s peak throughput
+   → 4 test types: Smoke, Load, Stress, Spike
 
-GitHub: github.com/saif55045/CP
+Key Takeaway:
+"DevOps is not a destination — it is a journey
+ of continuous improvement."
+
+CI/CD Repo  : github.com/saif55045/CP
+k6 Repo     : github.com/saif55045/DevOps_Project_testing_with_K6
 
 Thank you! Questions?
 ```
 
 ### Speaker Notes:
-> "To summarize — this semester we went from Linux basics all the way to a fully automated CI/CD pipeline. Our Todo List project demonstrates the complete DevOps workflow: a developer pushes code, and within minutes, a tested, packaged application is live on the server — automatically. The gaps we identified give us a clear roadmap for what to learn next in our DevOps journey. Thank you — we're happy to take any questions."
+> "To summarize — this semester we went from Linux basics all the way to a fully automated CI/CD pipeline. And through Task 2, we explored Performance Testing with k6 — proving that our Todo List app can handle 200 concurrent users with zero failures. The gaps we identified give us a clear roadmap for what to learn next. Thank you — we are happy to take any questions."
 
 ---
 
 ## 🎯 Presentation Checklist
 
 Before your presentation:
-- [ ] Practice the demo — make sure Jenkins and Tomcat are running
-- [ ] Have the GitHub repo open in a browser tab
-- [ ] Have Jenkins open in a browser tab
-- [ ] Have Grafana open in a browser tab
-- [ ] Have the app open in a browser tab
-- [ ] Start screen recording software (OBS / Windows Game Bar: Win+G)
-- [ ] Print Task 1 report (black & white, double-sided) and submit before starting
-- [ ] All group members prepared to explain their technical section
+- [ ] Tomcat is running with the Todo List app at `localhost:9090`
+- [ ] k6 is installed and working (`k6 version` in terminal)
+- [ ] Terminal is open at `project/k6-tests/` folder
+- [ ] Have k6 GitHub repo open: `github.com/saif55045/DevOps_Project_testing_with_K6`
+- [ ] Have FINDINGS.md open to show results
+- [ ] Start screen recording (OBS / Windows Game Bar: `Win + G`)
+- [ ] Print Task 1 report (black & white, double-sided) → submit BEFORE starting
+- [ ] All group members know which slides they're presenting
 
 ### Time check:
-- Slides 1–5: **~4:30 min** → Member 1
-- Slides 6–8: **~4:00 min** → Member 2
-- Slides 9–11: **~5:15 min** → Member 3
-- Slide 12: **~1:00 min** → All together
+- Slides 1–5: **~4:00 min** → Member 1 (DevOps overview)
+- Slides 6–8: **~3:30 min** → Member 2 (CI/CD project)
+- Slides 9–11: **~5:00 min** → Member 3 (k6 topic + live demo)
+- Slides 12–14: **~2:30 min** → Member 3 / All (gaps + conclusion)
 - **Total: ~15 minutes ✅**
 
 ---
